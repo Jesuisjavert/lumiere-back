@@ -5,13 +5,13 @@ from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.pagination import PageNumberPagination
-from .models import Movie, MovieRankComment
+from .models import Movie, MovieRankComment, Genre
 from .serializers import MovieListSerializer, MovieDetailSerializer, MovieRankCommentSerializer
 # Create your views here.
 
 @api_view(['GET'])
-def index(request):
-    movies = Movie.objects.all()[:18]
+def index(request, genre_id):
+    movies = Genre.objects.get(id=genre_id).movies.order_by('-popularity').filter(vote_average__gte=7.5)[:18]
     serializer = MovieListSerializer(movies, many=True)
     return Response(serializer.data)
 
